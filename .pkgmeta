@@ -1,0 +1,17 @@
+package-as: LoreReader
+
+enable-nolib-creation: no
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+
+ignore:
+  - tests
+  - README.md
+  - DESIGN.md
+  - SETUP.md
+  - TESTING.md
+  - RELEASING.md
+  - CURSEFORGE.md
+  - CHANGELOG.md

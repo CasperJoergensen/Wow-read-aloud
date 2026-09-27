@@ -1,13 +1,13 @@
 # LoreReader — design
 
-A private WoW Forever (and retail) addon that reads quest, gossip and book lore aloud with a neural voice.
+A WoW Forever and retail addon, published on CurseForge, that reads quest, gossip and book lore aloud with the game's text-to-speech.
 
 ## Decisions
 
 | Topic | Decision |
 |---|---|
-| Game | WoW Forever (modern retail client, Interface `16001`, Lua 5.1), and retail WoW (Interface `120105`) since both run the same client and APIs. Windows 11, English client, single user. |
-| Voice path | In-game only: `C_VoiceChat.SpeakText`. Neural voices come from NaturalVoiceSAPIAdapter, which exposes Windows 11 Narrator natural voices as SAPI5 voices that WoW can see (see `SETUP.md`). No external program. |
+| Game | WoW Forever (modern retail client, Interface `16001`, Lua 5.1), and retail WoW (Interface `120105`) since both run the same client and APIs. Windows and macOS (the OS provides the voices). |
+| Voice path | In-game only: `C_VoiceChat.SpeakText`. No external program. Better voices are the user's OS voices; on Windows, NaturalVoiceSAPIAdapter is documented as an optional third-party step (link only, no signing walkthrough). |
 | What is read | Quest description (offer), quest completion text (turn-in), quest log description (map panel and popup), NPC gossip text, books/plaques/letters (current page). Title first for quests and books. |
 | Not read | Objectives, progress text ("have you done it yet?"), quest greetings, mail. |
 | Trigger | Button only — a "Read Aloud" button on each frame, which becomes "Stop" while that frame is being read. |
@@ -17,6 +17,8 @@ A private WoW Forever (and retail) addon that reads quest, gossip and book lore 
 | Settings | Options → AddOns → LoreReader: voice, speed, volume, test button. Account-wide. Slash commands mirror them. |
 | Voice missing | Fall back to WoW's default voice and warn once per session. |
 | Slash | `/lore`, `/lr`, `/readaloud`. |
+| Languages | Addon labels go through `Locales.lua` (English only for now, falls back to English). Game text is read in the client's language. |
+| Distribution | CurseForge only, MIT license, public GitHub repo. Tag `v*` → BigWigs packager uploads for Forever (1.60.1) and retail. |
 
 ## Why not the original chat-log design
 
@@ -31,14 +33,14 @@ A pixel bridge (addon draws text as coloured pixels, external program screen-cap
 ## Code layout
 
 ```
-LoreReader/
-  LoreReader.toc   Interface 16001 (Forever) + 120105 (retail), SavedVariables LoreReaderDB
-  Text.lua         Markup clean-up and chunking (pure Lua, unit-tested)
-  Speech.lua       Queue over C_VoiceChat.SpeakText, voice resolution and fallbacks
-  Sources.lua      Text getters per frame
-  Buttons.lua      Buttons, button placement (LAYOUT table), stop rules
-  Settings.lua     Options panel (modern Settings API)
-  Core.lua         Saved settings, slash commands, startup
+LoreReader.toc     Interface 16001 (Forever) + 120105 (retail), SavedVariables LoreReaderDB
+Locales.lua        Translatable UI strings (L["English text"])
+Text.lua           Markup clean-up and chunking (pure Lua, unit-tested)
+Speech.lua         Queue over C_VoiceChat.SpeakText, voice resolution and fallbacks
+Sources.lua        Text getters per frame
+Buttons.lua        Buttons, button placement (LAYOUT table), stop rules
+Settings.lua       Options panel (modern Settings API)
+Core.lua           Saved settings, slash commands, startup
 tests/run.lua      Offline tests with stubbed WoW APIs (lua5.1 tests/run.lua)
 ```
 
@@ -49,3 +51,5 @@ tests/run.lua      Offline tests with stubbed WoW APIs (lua5.1 tests/run.lua)
 - `StopSpeakingText` followed by `SpeakText` in the same frame breaks playback (known client bug), so a new reading starts 0.15 s after stopping the old one.
 - Voices are stored by name, not ID, because IDs can shift when voices are installed or removed.
 - If the chosen voice fails, the default voice is used for the rest of the session.
+
+The repo root is the addon folder; `.pkgmeta` excludes docs and tests from the release zip.

@@ -4,6 +4,7 @@
 -- time: starting a new one stops the old one.
 
 local _, ns = ...
+local L = ns.L
 
 local Speech = {
     active = false,
@@ -75,7 +76,7 @@ function Speech:ResolveVoice()
         end
         if not self.warnedMissing then
             self.warnedMissing = true
-            ns.Print(("Voice \"%s\" isn't available, using the default voice. See SETUP.md if the neural voices disappeared."):format(wanted))
+            ns.Print(L["Voice \"%s\" isn't available, using the default voice."]:format(wanted))
         end
     end
     return defaultVoiceID(), false
@@ -93,7 +94,7 @@ function Speech:Play(source, ...)
         end
     end
     if #queue == 0 then
-        ns.Print("There's no text to read here.")
+        ns.Print(L["There's no text to read here."])
         return
     end
 
@@ -126,7 +127,7 @@ function Speech:SpeakCurrent()
 
     C_Timer.After(START_TIMEOUT, function()
         if gen == self.gen and index == self.index and self.awaitingStart then
-            ns.Print("Text-to-speech didn't respond. Check your voice setup with /lore voices.")
+            ns.Print(L["Text-to-speech didn't respond. Check your voices with /lore voices."])
             self:Stop()
         end
     end)
@@ -205,10 +206,10 @@ function Speech:OnFailed(utteranceID, status)
         retry()
     elseif self.usingChosenVoice then
         self.voiceBroken = true
-        ns.Print(("Voice \"%s\" failed (%s), using the default voice for the rest of this session."):format(ns.db.voice, statusName(status)))
+        ns.Print(L["Voice \"%s\" failed (%s), using the default voice for the rest of this session."]:format(ns.db.voice, statusName(status)))
         retry()
     else
-        ns.Print(("Text-to-speech failed: %s."):format(statusName(status)))
+        ns.Print(L["Text-to-speech failed: %s."]:format(statusName(status)))
         self:Stop()
     end
 end

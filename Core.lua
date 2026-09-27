@@ -1,6 +1,7 @@
 -- Startup, saved settings and slash commands.
 
 local ADDON_NAME, ns = ...
+local L = ns.L
 
 function ns.Print(msg)
     DEFAULT_CHAT_FRAME:AddMessage("|cffc8a86bLoreReader:|r " .. msg)
@@ -21,35 +22,35 @@ local function clamp(n, lo, hi)
 end
 
 local HELP = {
-    "/lore - open the options panel",
-    "/lore stop - stop reading",
-    "/lore test - read a sample",
-    "/lore voices - list the voices WoW can see",
-    "/lore voice <name|default> - pick a voice",
-    "/lore rate <-10..10> - reading speed",
-    "/lore volume <0..100> - volume",
+    L["/lore - open the options panel"],
+    L["/lore stop - stop reading"],
+    L["/lore test - read a sample"],
+    L["/lore voices - list the voices WoW can see"],
+    L["/lore voice <name|default> - pick a voice"],
+    L["/lore rate <-10..10> - reading speed"],
+    L["/lore volume <0..100> - volume"],
 }
 
 local function listVoices()
     local voices = C_VoiceChat.GetTtsVoices() or {}
     if #voices == 0 then
-        ns.Print("WoW reports no text-to-speech voices.")
+        ns.Print(L["WoW reports no text-to-speech voices."])
         return
     end
-    ns.Print("Voices WoW can see:")
+    ns.Print(L["Voices WoW can see:"])
     for _, voice in ipairs(voices) do
-        local marker = (voice.name == ns.db.voice) and " (selected)" or ""
+        local marker = (voice.name == ns.db.voice) and (" " .. L["(selected)"]) or ""
         ns.Print(("  %d: %s%s"):format(voice.voiceID, voice.name, marker))
     end
     if ns.db.voice == "" then
-        ns.Print("Using the WoW default voice.")
+        ns.Print(L["Using the WoW default voice."])
     end
 end
 
 local function setVoice(query)
     if query == "" or query:lower() == "default" then
         ns.Options:Set("voice", "")
-        ns.Print("Using the WoW default voice.")
+        ns.Print(L["Using the WoW default voice."])
         return
     end
     local needle = query:lower()
@@ -57,11 +58,11 @@ local function setVoice(query)
         if tostring(voice.voiceID) == query or voice.name:lower():find(needle, 1, true) then
             ns.Options:Set("voice", voice.name)
             ns.Speech.voiceBroken = false
-            ns.Print("Voice set to " .. voice.name .. ".")
+            ns.Print(L["Voice set to %s."]:format(voice.name))
             return
         end
     end
-    ns.Print("No voice matches \"" .. query .. "\". Try /lore voices.")
+    ns.Print(L["No voice matches \"%s\". Try /lore voices."]:format(query))
 end
 
 local function handleSlash(input)
@@ -79,10 +80,10 @@ local function handleSlash(input)
         setVoice(rest)
     elseif cmd == "rate" and tonumber(rest) then
         ns.Options:Set("rate", clamp(math.floor(tonumber(rest) + 0.5), -10, 10))
-        ns.Print("Speed set to " .. ns.db.rate .. ".")
+        ns.Print(L["Speed set to %d."]:format(ns.db.rate))
     elseif cmd == "volume" and tonumber(rest) then
         ns.Options:Set("volume", clamp(math.floor(tonumber(rest) + 0.5), 0, 100))
-        ns.Print("Volume set to " .. ns.db.volume .. ".")
+        ns.Print(L["Volume set to %d."]:format(ns.db.volume))
     else
         for _, line in ipairs(HELP) do
             ns.Print(line)

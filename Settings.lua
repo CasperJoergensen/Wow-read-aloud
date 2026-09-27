@@ -2,6 +2,7 @@
 -- Settings are account-wide (LoreReaderDB).
 
 local ADDON_NAME, ns = ...
+local L = ns.L
 
 local Options = { settings = {} }
 ns.Options = Options
@@ -12,7 +13,7 @@ ns.DEFAULTS = {
     volume = 100, -- 0 .. 100
 }
 
-local SAMPLE = "Greetings, traveler. The Defias Brotherhood has been raiding the farms of Westfall."
+local SAMPLE = L["Greetings, traveler. The Defias Brotherhood has been raiding the farms of Westfall."]
 
 function Options:PlaySample()
     ns.Speech:Play("sample", SAMPLE)
@@ -30,7 +31,7 @@ end
 
 local function voiceOptions()
     local container = Settings.CreateControlTextContainer()
-    container:Add("", "WoW default voice")
+    container:Add("", L["WoW default voice"])
     local found = false
     for _, voice in ipairs(C_VoiceChat.GetTtsVoices() or {}) do
         container:Add(voice.name, voice.name)
@@ -39,7 +40,7 @@ local function voiceOptions()
         end
     end
     if ns.db.voice ~= "" and not found then
-        container:Add(ns.db.voice, ns.db.voice .. " (missing)")
+        container:Add(ns.db.voice, ns.db.voice .. " " .. L["(missing)"])
     end
     return container:GetData()
 end
@@ -53,22 +54,22 @@ local function build()
         return setting
     end
 
-    Settings.CreateDropdown(category, register("voice", Settings.VarType.String, "Voice"), voiceOptions,
-        "Neural voices appear here once the voice adapter is installed (see SETUP.md).")
+    Settings.CreateDropdown(category, register("voice", Settings.VarType.String, L["Voice"]), voiceOptions,
+        L["Voices installed on your computer. See the addon page for getting better voices."])
 
     local rateOptions = Settings.CreateSliderOptions(-10, 10, 1)
     rateOptions:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right)
-    Settings.CreateSlider(category, register("rate", Settings.VarType.Number, "Speed"), rateOptions,
-        "Reading speed. 0 is normal.")
+    Settings.CreateSlider(category, register("rate", Settings.VarType.Number, L["Speed"]), rateOptions,
+        L["Reading speed. 0 is normal."])
 
     local volumeOptions = Settings.CreateSliderOptions(0, 100, 5)
     volumeOptions:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right)
-    Settings.CreateSlider(category, register("volume", Settings.VarType.Number, "Volume"), volumeOptions)
+    Settings.CreateSlider(category, register("volume", Settings.VarType.Number, L["Volume"]), volumeOptions)
 
     local layout = SettingsPanel:GetLayout(category)
-    layout:AddInitializer(CreateSettingsButtonInitializer("Test voice", "Play sample", function()
+    layout:AddInitializer(CreateSettingsButtonInitializer(L["Test voice"], L["Play sample"], function()
         Options:PlaySample()
-    end, "Reads a short sample with the settings above.", true))
+    end, L["Reads a short sample with the settings above."], true))
 
     Settings.RegisterAddOnCategory(category)
     Options.category = category
@@ -76,12 +77,12 @@ end
 
 function Options:Init()
     if not Settings or not Settings.RegisterVerticalLayoutCategory then
-        ns.Print("The options panel isn't available in this client; use /lore help for slash commands.")
+        ns.Print(L["The options panel isn't available in this client; use /lore help for slash commands."])
         return
     end
     local ok, err = pcall(build)
     if not ok then
-        ns.Print("Couldn't build the options panel (" .. tostring(err) .. "); use /lore help for slash commands.")
+        ns.Print(L["Couldn't build the options panel (%s); use /lore help for slash commands."]:format(tostring(err)))
     end
 end
 
@@ -89,6 +90,6 @@ function Options:Open()
     if self.category and Settings.OpenToCategory then
         Settings.OpenToCategory(self.category:GetID())
     else
-        ns.Print("Options panel unavailable; use /lore help.")
+        ns.Print(L["Options panel unavailable; use /lore help."])
     end
 end

@@ -2,9 +2,12 @@
 ## Title: LoreReader
 ## Notes: Reads quest, gossip and book lore aloud with the game's text-to-speech.
 ## Author: Casper Joergensen
-## Version: 0.1.0
+## Version: @project-version@
+## X-License: MIT
+## X-Website: https://github.com/CasperJoergensen/LoreReader
 ## SavedVariables: LoreReaderDB
 
+Locales.lua
 Text.lua
 Speech.lua
 Sources.lua

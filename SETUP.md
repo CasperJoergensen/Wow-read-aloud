@@ -1,55 +1,37 @@
 # Setup
 
-## 1. Install the addon
+## Install
 
-Copy the `LoreReader` folder into WoW Forever's AddOns folder. The beta client installs into `_classic_beta_`, so the path is usually:
+Install LoreReader from CurseForge, or copy the addon into your AddOns folder by hand. For a manual install, the folder must be named `LoreReader`, with `LoreReader.toc` directly inside it:
 
-```
-C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns\LoreReader
-```
+| Game | Folder |
+|---|---|
+| WoW Forever (beta) | `World of Warcraft\_classic_beta_\Interface\AddOns\LoreReader` |
+| Retail | `World of Warcraft\_retail_\Interface\AddOns\LoreReader` |
 
-For retail WoW, copy it into `_retail_\Interface\AddOns\LoreReader` as well. Each game keeps its own copy and its own settings.
+LoreReader works right away with the text-to-speech voice selected in WoW's own options (Options → Accessibility → Text to Speech).
 
-If retail shows LoreReader as "out of date" after a patch, the retail version number in `LoreReader.toc` needs bumping: run `/dump select(4, GetBuildInfo())` in game and put that number after `16001,` on the `## Interface:` line.
+## Better voices (optional)
 
-Check that `LoreReader.toc` is directly inside that folder, then enable LoreReader on the character select AddOns screen. LoreReader works immediately with WoW's default (robotic) voice. The steps below add neural voices.
+LoreReader uses the voices your operating system provides, so the quality depends on which voices you have installed. Pick one in Options → AddOns → LoreReader, or with `/lore voices` and `/lore voice <name>`.
 
-## 2. Install neural voices (Windows 11)
+### Windows
 
-WoW's text-to-speech can only use classic Windows "SAPI5" voices. [NaturalVoiceSAPIAdapter](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter) makes Windows 11's Narrator natural (neural) voices show up as SAPI5 voices.
+The built-in Windows voices (David, Zira) sound robotic. WoW can only use classic "SAPI5" voices, so the newer natural voices in Windows 11 don't appear by default.
 
-1. **Install the Narrator natural voice packages — the older versions.** Microsoft changed the Store versions so the adapter can't use them any more. Download the working versions from the adapter wiki: [Narrator natural voice download links](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter/wiki/Narrator-natural-voice-download-links). Good narration voices: **Aria**, **Jenny**, **Guy** (en-US).
-2. **Install the adapter.** Download the latest release from the adapter's GitHub page and run the installer. Install **both the 32-bit and 64-bit** versions. In its settings, enable local Narrator voices. Optionally also enable **Edge online voices** as a fallback — they need no packages but require internet and are a bit slower.
-3. **Self-sign the adapter DLL.** Since mid-2025 WoW refuses to load unsigned voice DLLs, so the voices won't appear until the DLL is signed. The community steps are in [adapter issue #37](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter/issues/37#issuecomment-3680384897) — follow that thread first, as it is the source of truth. The general shape (PowerShell as Administrator):
+The community project [NaturalVoiceSAPIAdapter](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter) makes those natural voices available to SAPI5 programs, including WoW. It is a third-party tool, not part of LoreReader. Follow its own instructions, and read the notes below first.
 
-   ```powershell
-   # Create a code-signing certificate
-   $cert = New-SelfSignedCertificate -Type CodeSigningCert -Subject "CN=Local Voice Adapter" -CertStoreLocation Cert:\CurrentUser\My
+- Recent WoW versions only load signed voice DLLs, so the adapter has to be signed on your PC before WoW will show its voices. The adapter's issue tracker describes how ([issue #37](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter/issues/37)). Signing means trusting a certificate you create yourself. Make sure you understand what that involves before doing it.
+- WoW patches and Windows updates have broken this setup before. If your chosen voice disappears, LoreReader switches to the default voice and prints a warning in chat.
 
-   # Trust it (Root + TrustedPublisher)
-   Export-Certificate -Cert $cert -FilePath "$env:TEMP\voice.cer"
-   Import-Certificate -FilePath "$env:TEMP\voice.cer" -CertStoreLocation Cert:\LocalMachine\Root
-   Import-Certificate -FilePath "$env:TEMP\voice.cer" -CertStoreLocation Cert:\LocalMachine\TrustedPublisher
+### macOS
 
-   # Sign both adapter DLLs (adjust the paths to where the installer put them)
-   Set-AuthenticodeSignature -FilePath "<adapter folder>\x64\NaturalVoiceSAPIAdapter.dll" -Certificate $cert
-   Set-AuthenticodeSignature -FilePath "<adapter folder>\x86\NaturalVoiceSAPIAdapter.dll" -Certificate $cert
-   ```
+Open System Settings → Accessibility → Spoken Content → System Voice → Manage Voices, and download a higher-quality voice ("Enhanced" or "Premium"). Restart WoW, and the voice appears in LoreReader's voice list.
 
-   Security note: a trusted root certificate can sign anything your PC will trust. When you're done, delete the certificate's private key (`Remove-Item Cert:\CurrentUser\My\<thumbprint>`), so nobody can use it to sign anything else. The public part stays trusted so the DLL still validates.
-4. **Restart WoW** fully (not just `/reload`).
+(Mac support hasn't been tested yet. Please report how it goes.)
 
-## 3. Check it in game
+## Troubleshooting
 
-```
-/lore voices          lists every voice WoW can see
-/lore voice aria      pick a voice by (part of) its name
-/lore test            read a sample
-/lore                 open the options panel
-```
-
-If only "Microsoft David/Zira" appear, the adapter isn't being loaded: re-check the signing step and that both 32-bit and 64-bit adapters are installed.
-
-## When it breaks
-
-WoW patches and Windows voice updates have broken the adapter before. When that happens LoreReader keeps working with the default voice and prints a one-line warning. Check the adapter's GitHub issues for a fix, then pick your voice again with `/lore voice <name>`.
+- **No sound:** check that `/lore test` speaks, and that WoW's own text-to-speech works (Options → Accessibility → Text to Speech → Play Sample).
+- **A voice is missing from the list:** restart WoW completely; `/reload` isn't enough. Then check `/lore voices`.
+- **Retail shows LoreReader as "out of date" after a patch:** tick "Load out of date AddOns" until an update is released.

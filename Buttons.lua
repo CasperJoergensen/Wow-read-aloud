@@ -12,6 +12,7 @@
 --     since the text on screen no longer matches.
 
 local _, ns = ...
+local L = ns.L
 
 local Speech, Sources = ns.Speech, ns.Sources
 local Buttons = { list = {} }
@@ -34,7 +35,7 @@ local LAYOUT = {
     questLogPop = { "TOP", 0, -30 },
 }
 
-local READ_LABEL, STOP_LABEL = "Read Aloud", "Stop"
+local READ_LABEL, STOP_LABEL = L["Read Aloud"], L["Stop"]
 
 -- getKey() returns the source key for what the frame currently shows, or nil
 -- to hide the button.

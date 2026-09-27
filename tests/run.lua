@@ -66,8 +66,8 @@ end
 -- Load addon files that don't need real frames
 ---------------------------------------------------------------------------
 local ns = {}
-for _, file in ipairs({ "Text.lua", "Speech.lua" }) do
-    local chunk = assert(loadfile("LoreReader/" .. file))
+for _, file in ipairs({ "Locales.lua", "Text.lua", "Speech.lua" }) do
+    local chunk = assert(loadfile(file))
     chunk("LoreReader", ns)
 end
 ns.Print = function(msg) printed[#printed + 1] = msg end

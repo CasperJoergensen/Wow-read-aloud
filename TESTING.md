@@ -55,6 +55,10 @@ The addon was built without access to the game. Text clean-up and the speech que
 - [ ] A very long quest text is read to the end without being cut off.
 - [ ] Opening a book, gossip or quest while a quest-log reading is playing stops it.
 
+## Mac (if you have access to one)
+
+- [ ] `/lore voices` lists macOS voices and `/lore test` speaks.
+
 ## Retail
 
 - [ ] LoreReader loads in retail without "out of date" (see SETUP.md if it does).
@@ -62,4 +66,4 @@ The addon was built without access to the game. Text clean-up and the speech que
 
 ## If a button is in the wrong place
 
-Positions are in the `LAYOUT` table at the top of `LoreReader/Buttons.lua`: `{ anchorPoint, x, y }` relative to the frame. Adjust and `/reload`.
+Positions are in the `LAYOUT` table at the top of `Buttons.lua`: `{ anchorPoint, x, y }` relative to the frame. Adjust and `/reload`.
