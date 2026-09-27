@@ -8,6 +8,10 @@ Copy the `LoreReader` folder into WoW Forever's AddOns folder. The beta client i
 C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns\LoreReader
 ```
 
+For retail WoW, copy it into `_retail_\Interface\AddOns\LoreReader` as well. Each game keeps its own copy and its own settings.
+
+If retail shows LoreReader as "out of date" after a patch, the retail version number in `LoreReader.toc` needs bumping: run `/dump select(4, GetBuildInfo())` in game and put that number after `16001,` on the `## Interface:` line.
+
 Check that `LoreReader.toc` is directly inside that folder, then enable LoreReader on the character select AddOns screen. LoreReader works immediately with WoW's default (robotic) voice. The steps below add neural voices.
 
 ## 2. Install neural voices (Windows 11)

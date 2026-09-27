@@ -1,4 +1,4 @@
-## Interface: 16001
+## Interface: 16001, 120105
 ## Title: LoreReader
 ## Notes: Reads quest, gossip and book lore aloud with the game's text-to-speech.
 ## Author: Casper Joergensen

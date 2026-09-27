@@ -1,12 +1,12 @@
 # LoreReader — design
 
-A private WoW Forever addon that reads quest, gossip and book lore aloud with a neural voice.
+A private WoW Forever (and retail) addon that reads quest, gossip and book lore aloud with a neural voice.
 
 ## Decisions
 
 | Topic | Decision |
 |---|---|
-| Game | WoW Forever (modern retail client, Interface `16001`, Lua 5.1). Windows 11, English client, single user. |
+| Game | WoW Forever (modern retail client, Interface `16001`, Lua 5.1), and retail WoW (Interface `120105`) since both run the same client and APIs. Windows 11, English client, single user. |
 | Voice path | In-game only: `C_VoiceChat.SpeakText`. Neural voices come from NaturalVoiceSAPIAdapter, which exposes Windows 11 Narrator natural voices as SAPI5 voices that WoW can see (see `SETUP.md`). No external program. |
 | What is read | Quest description (offer), quest completion text (turn-in), quest log description (map panel and popup), NPC gossip text, books/plaques/letters (current page). Title first for quests and books. |
 | Not read | Objectives, progress text ("have you done it yet?"), quest greetings, mail. |
@@ -32,7 +32,7 @@ A pixel bridge (addon draws text as coloured pixels, external program screen-cap
 
 ```
 LoreReader/
-  LoreReader.toc   Interface 16001, SavedVariables LoreReaderDB
+  LoreReader.toc   Interface 16001 (Forever) + 120105 (retail), SavedVariables LoreReaderDB
   Text.lua         Markup clean-up and chunking (pure Lua, unit-tested)
   Speech.lua       Queue over C_VoiceChat.SpeakText, voice resolution and fallbacks
   Sources.lua      Text getters per frame
