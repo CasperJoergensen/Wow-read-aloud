@@ -1,93 +1,98 @@
-# Handoff — Lorecaster
+# Handoff — Piper voices for Lorecaster
 
-The state of the project as of 2026-09-27, for continuing locally. Also see [DESIGN.md](DESIGN.md) for the decisions, [TESTING.md](TESTING.md) for the in-game checklist, and [RELEASING.md](RELEASING.md) for publishing.
+Goal: let Lorecaster speak with **Piper** neural voices instead of the robotic Windows voices, or the fragile Microsoft voice adapter. This doc is for continuing that work locally. Addon background is in [DESIGN.md](DESIGN.md). The branch is `claude/wow-read-aloud-tts-30iltk`, not merged into `main` yet.
 
-## What it is
+> Nothing here has been built or tried yet. Facts marked (unverified) come from web research and need checking.
 
-Lorecaster is a WoW addon for **WoW Forever** (Blizzard's "Classic+", beta, retail-based client, Interface `16001`) and **retail** (Interface `120105`). It adds a **Read Aloud** button to lore frames and speaks the text with the game's built-in TTS (`C_VoiceChat.SpeakText`). It needs no external program.
+## Piper in 60 seconds
 
-## Getting started locally
+- **What it is:** an offline, free neural TTS engine from the Rhasspy / Home Assistant voice-assistant project. It runs on a plain CPU, many times faster than real time.
+- **How it works:** it turns text into phonemes (with espeak-ng), turns those into phoneme IDs, then a VITS neural model generates the audio.
+- **Voices:** each voice is an `.onnx` file (20–100 MB) plus a `.onnx.json` config. Quality levels run `x_low`, `low`, `medium`, `high`. Many languages, including English and Danish.
+- **Licensing (unverified):** development moved from `rhasspy/piper` (MIT) to `OHF-Voice/piper1-gpl` (GPL). **Each voice has its own license** from its training data. Check each voice's model card before shipping any generated audio.
+- **Quick try:**
+  ```bash
+  pip install piper-tts
+  python -m piper.download_voices en_US-lessac-medium      # command may differ by version; check the README
+  echo "Greetings, traveler." | piper -m en_US-lessac-medium.onnx -f hello.wav
+  ```
+- **Pronunciation:** it comes from espeak-ng, so fantasy names can come out wrong. Planned fix: a phonetic-spelling table applied in `Text.lua` before speaking, which benefits every route below.
 
-```bash
-git clone https://github.com/CasperJoergensen/Wow-read-aloud.git   # or the renamed repo, once renamed
-cd Wow-read-aloud
-git checkout claude/wow-read-aloud-tts-30iltk
-lua5.1 tests/run.lua        # offline tests (39 passing)
-```
+## The constraint
 
-The branch has **not** been merged to `main` yet. To try it in game, link or copy the repo folder as `Interface\AddOns\Lorecaster`:
+WoW addons can't run programs, write files at runtime, or send audio anywhere. They can only:
+- call `C_VoiceChat.SpeakText`, which uses the OS's **SAPI5** voices on Windows, and
+- play audio files **shipped inside an addon folder** with `PlaySoundFile`.
 
-```powershell
-# Run from the repo folder, in an elevated PowerShell. A symlink means edits show up after /reload.
-New-Item -ItemType SymbolicLink -Path "C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns\Lorecaster" -Target (Get-Location)
-```
+So Piper can reach the game only through one of three routes.
 
-Turn on `/console scriptErrors 1` while testing.
+## Route A — Piper as a SAPI5 voice (try first)
 
-## Status
+Wrap Piper so Windows sees it as an ordinary voice. WoW then lists it, and Lorecaster needs **no code changes**: pick it with `/lore voice <name>`.
 
-| Area | State |
-|---|---|
-| Addon code | Done, but **never run in the real game**. Only offline tests with stubbed WoW APIs. |
-| Docs | README, SETUP (public), DESIGN, TESTING, RELEASING, CURSEFORGE (page text), CHANGELOG |
-| Release pipeline | `.pkgmeta` + GitHub Actions (`tests.yml` on push, `release.yml` on `v*` tag via BigWigs packager). Never run. |
-| Name | **Lorecaster** (LoreReader was taken). Check that `curseforge.com/wow/addons/lorecaster` is free. |
+- **Candidates (unverified, early-stage, never reported working in WoW):**
+  - [Lej77/windows-text-to-speech](https://github.com/Lej77/windows-text-to-speech): a Rust SAPI5 engine with a Piper variant (`windows_tts_engine_piper.dll`), 32- and 64-bit, MIT/Apache.
+  - [willwade/SherpaOnnxAzureSAPI-installer](https://github.com/willwade/SherpaOnnxAzureSAPI-installer): sherpa-onnx/Piper as SAPI5. x64 only, a proof of concept with one voice.
+- **Steps:**
+  1. Build or install the engine DLL and register it, both 32- and 64-bit.
+  2. Check it in a plain SAPI5 program, e.g. PowerShell `System.Speech`:
+     ```powershell
+     Add-Type -AssemblyName System.Speech
+     (New-Object System.Speech.Synthesis.SpeechSynthesizer).GetInstalledVoices().VoiceInfo.Name
+     ```
+  3. **Self-sign the DLL.** Since about Aug 2025, WoW only loads signed voice DLLs. Use the same approach as NaturalVoiceSAPIAdapter [issue #37](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter/issues/37).
+  4. Restart WoW, run `/lore voices`, then `/lore voice <piper voice>` and `/lore test`.
+- **Watch for:**
+  - how long it takes to start speaking (Lorecaster speaks one chunk of up to 300 characters at a time, so a slow start is noticeable), and
+  - whether WoW's playback events (`VOICE_CHAT_TTS_PLAYBACK_STARTED` / `FINISHED`) fire. The queue in `Speech.lua` depends on them, and has a 10 s timeout if STARTED never comes.
+- **Verdict:** best for your own PC. It's a poor fit for public users, who would need to build, register and sign DLLs.
 
-## Next steps (in order)
+## Route B — pre-generated Piper voice pack (best for public users)
 
-1. **Test in game** with `TESTING.md`. The most uncertain parts:
-   - button positions (the `LAYOUT` table at the top of `Buttons.lua`)
-   - the options panel (modern `Settings` API, wrapped in `pcall`)
-   - the quest log button on `QuestMapFrame.DetailsFrame` and `QuestLogPopupDetailFrame`
-   - whether `ITEM_TEXT_READY` fires only on page turns
-   - the 2-second "keep reading" window after Accept/Complete
-2. Fix whatever testing finds. Keep `tests/run.lua` green.
-3. **Repo:** rename it to `Lorecaster`, make it public, and merge the branch into `main`. The TOC `X-Website` and doc links already point at `github.com/CasperJoergensen/Lorecaster`.
-4. **CurseForge:** create the project (MIT license, description from `CURSEFORGE.md`), add `## X-Curse-Project-ID: <id>` to `Lorecaster.toc`, and add the `CF_API_KEY` secret to GitHub.
-5. Tag `v0.1.0-beta.1` and push the tag. Check the Actions tab.
+Generate audio offline for known lore texts and ship it as an optional addon, e.g. `Lorecaster_VoicePack_<voice>`. Lorecaster plays the recording when one exists and falls back to live TTS when it doesn't. Players install nothing extra.
 
-## Code map
+**Pipeline:**
+1. **Collect texts.** Quest text comes from the server, so it's probably not in the client's data files (unverified). The practical source is to harvest it while playing: add a harvest mode to Lorecaster that saves `{questID, kind, cleanedText}` into SavedVariables. They're written to disk on logout or `/reload`. Scraping sites like Wowhead may break their terms of service, so avoid it.
+2. **Key each clip** by `kind + id + short hash of the cleaned text`, where kind is questDetail, questReward, gossip or itemText. If a patch rewrites a text, the hash misses and live TTS is used, so a clip never plays audio that doesn't match the text on screen.
+   - Quests: `GetQuestID()` (quest window) or the quest log's questID.
+   - Gossip: NPC ID from `UnitGUID("npc")`.
+   - Books: item name or ID.
+3. **Generate.** Run a small Python script over the harvested file:
+   - clean the text the same way `Text.Clean` does (port it, or run `Text.lua` with `lua5.1`),
+   - apply the pronunciation table,
+   - run Piper and save WAV files, then convert to Ogg with ffmpeg,
+   - write a manifest Lua file mapping key → `{ file, duration }`.
+4. **Package** the Ogg files and manifest as the voice-pack addon. Keep `## Dependencies: Lorecaster`, or make the pack optional through `C_AddOns.IsAddOnLoaded`.
 
-| File | Role |
-|---|---|
-| `Lorecaster.toc` | `## Interface: 16001, 120105`, `SavedVariables: LorecasterDB`, `Version: @project-version@` |
-| `Locales.lua` | `ns.L["English"]` falls back to the key. Add translations here. |
-| `Text.lua` | Pure Lua: `Clean` strips markup and turns line breaks into sentences; `Chunk` splits on sentence boundaries up to `maxLen`. |
-| `Speech.lua` | Queue: speaks one chunk at a time and waits for `VOICE_CHAT_TTS_PLAYBACK_FINISHED` for its own utterance ID. It also handles: the 0.15 s start delay (a client bug when calling Stop then Speak), a 10 s start timeout, halving the chunk size on `MaxCharactersExceeded`, and falling back to the default voice if the chosen voice fails. Voices are stored by **name**. |
-| `Sources.lua` | Text getters that return `title, body`. They cover: quest detail, quest reward, quest log (map and popup), gossip (`C_GossipInfo.GetText`), and item text (`ItemTextGetText`, with the title only on page 1). |
-| `Buttons.lua` | Buttons, their `LAYOUT`, and the stop rules (see DESIGN.md). Frames are set up lazily, retried on `ADDON_LOADED`. |
-| `Settings.lua` | Options → AddOns panel: a voice dropdown, rate from −10 to 10, volume from 0 to 100, and a test button. |
-| `Core.lua` | Database defaults and slash commands: `/lore`, `/lc`, `/readaloud` with `stop`, `test`, `voices`, `voice <name>`, `rate <n>`, `volume <n>`. |
-| `tests/run.lua` | Offline tests with stubbed WoW APIs. |
+**Addon changes needed:**
+- **`Speech.lua`:** add a playback backend for audio files next to the TTS backend. Play with `PlaySoundFile(path, "Dialog")`, which returns a sound handle; stop with `StopSound(handle)`.
+- **Detecting the end of a clip:** use the `SOUNDKIT_FINISHED` event for the handle, if it fires for file playback (unverified), otherwise a timer based on the manifest's `duration`. The rest of the queue logic (Stop button, interrupts, stop rules) stays the same.
+- **`Sources.lua`:** return the key parts (IDs) alongside the text.
+- **A setting:** "Use voice pack when available".
 
-## Key decisions (short)
+**Costs:**
+- **Size:** roughly 0.5–1 MB per minute of Ogg. Thousands of quests means hundreds of MB, so consider splitting packs per zone or level range.
+- **Upkeep:** patches that change quest text need a harvest and regeneration pass.
+- **Licensing:** only use Piper voices whose license allows redistributing the generated audio.
 
-- **Reads:** quest description, completion text, quest log description, gossip, and books (current page). Titles are read first for quests and books.
-- **Doesn't read:** objectives, progress text, greetings or mail.
-- **Trigger and interrupts:** button only. A new click interrupts the current reading, and the button turns into Stop while reading.
-- **When it stops:** it keeps reading after Accept/Complete. It stops on closing the frame, opening a different lore frame, new gossip text, or a page turn.
-- **Text:** read verbatim, including the player's name.
-- **Settings:** account-wide. If the chosen voice is missing, it falls back to the default and warns once per session.
-- **Publishing:** public on CurseForge only, MIT license, English UI but ready for translation, Windows and Mac.
-- **Neural voices:** on Windows they are an **optional, link-only** third-party step (NaturalVoiceSAPIAdapter). The public docs deliberately leave out the DLL-signing walkthrough.
+## Route C — pixel bridge to an external Piper program (not recommended)
 
-## Research findings worth keeping
+The addon draws the text as a strip of coloured pixels, and an external program screen-captures it, decodes the text and plays it with Piper live. It covers all text with no pre-generation, but it's by far the most work: an encoder, a capture loop, and handling DPI and window position. It also needs a companion program, which is a harder sell on CurseForge. Park it unless A and B both fail.
 
-- **The chat-log idea (the original plan) doesn't work.** Addon `AddMessage` output isn't logged, the log flushes minutes late, and whispering to self is blocked in instances.
-- **`C_VoiceChat.SpeakText(voiceID, text, rate, volume, overlap)`** is the current signature (patch 12.0 removed `destination`). Rate ranges from −10 to 10 and volume from 0 to 100. There's a per-call character limit whose size isn't documented.
-- **WoW uses SAPI5 voices on Windows.** Since around Aug 2025 it only loads **signed** voice DLLs, so NaturalVoiceSAPIAdapter must be self-signed ([adapter issue #37](https://github.com/gexgd0419/NaturalVoiceSAPIAdapter/issues/37)). Current Store Narrator voice packages don't work with the adapter; use the older ones from the adapter wiki.
-- **WoW Forever** runs the retail client and API: Lua 5.1, `WOW_PROJECT_ID` is the same as retail's, and `select(4, GetBuildInfo())` returns `16001`. It installs to `_classic_beta_`. The Forever TOC suffix is `_Camelot`, if per-flavor TOCs are ever needed.
-- **BigWigs packager v2.6+** supports Forever and maps `16001` to CurseForge game version 1.60.1. It handles comma-separated interface lists.
-- **API reference dumps** for the Forever client: [Thunderz96/forever-addon-kit](https://github.com/Thunderz96/forever-addon-kit) and [imperial64/forever-addon-dev](https://github.com/imperial64/forever-addon-dev). They confirmed `QuestMapFrame`, `QuestLogPopupDetailFrame`, `ItemTextFrame`, `C_GossipInfo.GetText` and `GetQuestLogQuestText` (build 70009).
-- **Similar addons:** QuestSpeaker, Forever TTS and Quest TTS use the built-in TTS. Neural Voice TTS is Mac-only with Piper. Forever Voiceover, Spoken Quests and Quest Reader Addon use pre-recorded packs.
+## Suggested order
 
-## Ideas for later
+1. **One evening:** install Piper and pick a voice you like (listen to several). Build the pronunciation table idea while you're there.
+2. **Try Route A** on your PC. If it works in WoW, you personally are done.
+3. For public users, **prototype Route B:**
+   - the harvest mode,
+   - the generation script for a handful of quests,
+   - the file-playback backend in `Speech.lua`.
+   - Then measure the size and quality before committing to full packs.
 
-Roughly in order of value for the effort:
+## Open questions
 
-1. **Pronunciation table.** Map lore names and the player's name to phonetic spellings before speaking, in `Text.lua`, with user-editable entries.
-2. **A voice to match the speaker.** Separate voices for male and female NPCs, using the `UnitSex("npc")` API, plus a narrator voice for books.
-3. **Windows speech markup** for pauses and emphasis (Blizzard's docs say `SpeakText` accepts it on Windows). Verify in game first, including with the adapter.
-4. **Text tidying:** expand abbreviations and read Roman numerals as words.
-5. **Optional pre-generated voice pack.** Offline Piper or Kokoro audio played with `PlaySoundFile`, falling back to live TTS. It needs a quest-text dump and has to be regenerated when patches change quest text.
-6. **Pixel bridge to an external neural TTS engine.** For power users only; the most work of all.
+- Which Piper voice, and is its license OK for redistribution?
+- Does Route A work in WoW at all? Check that the DLL gets signed and loaded, and that the playback events fire.
+- Does `SOUNDKIT_FINISHED` fire for `PlaySoundFile` handles on the Forever client?
+- Is any quest text in the client's data files (would make harvesting unnecessary), or is it server-only?
+- How big would a full voice pack be, and should it be split per zone?
