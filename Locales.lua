@@ -1,4 +1,4 @@
--- Translations for LoreReader's own labels and messages. Quest, gossip and
+-- Translations for Lorecaster's own labels and messages. Quest, gossip and
 -- book text is read in whatever language the game client uses; this only
 -- covers the addon's UI.
 --

@@ -68,7 +68,7 @@ end
 local ns = {}
 for _, file in ipairs({ "Locales.lua", "Text.lua", "Speech.lua" }) do
     local chunk = assert(loadfile(file))
-    chunk("LoreReader", ns)
+    chunk("Lorecaster", ns)
 end
 ns.Print = function(msg) printed[#printed + 1] = msg end
 ns.db = { voice = "", rate = 0, volume = 100 }

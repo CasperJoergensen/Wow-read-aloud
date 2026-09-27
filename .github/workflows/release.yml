@@ -2,7 +2,7 @@ name: Release
 
 # Push a tag like v0.1.0 (or v0.1.0-beta.1 for a beta) to build the zip and
 # upload it to CurseForge. Needs the CF_API_KEY repository secret and
-# "## X-Curse-Project-ID" in LoreReader.toc (see RELEASING.md).
+# "## X-Curse-Project-ID" in Lorecaster.toc (see RELEASING.md).
 
 on:
   push:

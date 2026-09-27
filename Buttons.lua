@@ -100,7 +100,7 @@ setups.quest = function()
     if not QuestFrame then
         return false
     end
-    local button = makeButton("LoreReaderQuestButton", QuestFrame, LAYOUT.quest, function()
+    local button = makeButton("LorecasterQuestButton", QuestFrame, LAYOUT.quest, function()
         if QuestFrameDetailPanel and QuestFrameDetailPanel:IsShown() then
             return "questDetail"
         elseif QuestFrameRewardPanel and QuestFrameRewardPanel:IsShown() then
@@ -126,7 +126,7 @@ setups.gossip = function()
     if not GossipFrame then
         return false
     end
-    makeButton("LoreReaderGossipButton", GossipFrame, LAYOUT.gossip, function()
+    makeButton("LorecasterGossipButton", GossipFrame, LAYOUT.gossip, function()
         return "gossip"
     end)
     GossipFrame:HookScript("OnHide", function()
@@ -141,7 +141,7 @@ setups.itemText = function()
     if not ItemTextFrame then
         return false
     end
-    makeButton("LoreReaderItemTextButton", ItemTextFrame, LAYOUT.itemText, function()
+    makeButton("LorecasterItemTextButton", ItemTextFrame, LAYOUT.itemText, function()
         return "itemText"
     end)
     ItemTextFrame:HookScript("OnHide", function()
@@ -155,7 +155,7 @@ setups.questLog = function()
     if not details then
         return false
     end
-    makeButton("LoreReaderQuestLogButton", details, LAYOUT.questLog, function()
+    makeButton("LorecasterQuestLogButton", details, LAYOUT.questLog, function()
         return "questLog"
     end)
     details:HookScript("OnHide", function()
@@ -172,7 +172,7 @@ setups.questLogPopup = function()
     if not QuestLogPopupDetailFrame then
         return false
     end
-    makeButton("LoreReaderQuestLogPopupButton", QuestLogPopupDetailFrame, LAYOUT.questLogPop, function()
+    makeButton("LorecasterQuestLogPopupButton", QuestLogPopupDetailFrame, LAYOUT.questLogPop, function()
         return "questLogPopup"
     end)
     QuestLogPopupDetailFrame:HookScript("OnHide", function()

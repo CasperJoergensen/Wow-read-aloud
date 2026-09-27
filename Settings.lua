@@ -1,5 +1,5 @@
--- Options panel under Game Menu -> Options -> AddOns -> LoreReader.
--- Settings are account-wide (LoreReaderDB).
+-- Options panel under Game Menu -> Options -> AddOns -> Lorecaster.
+-- Settings are account-wide (LorecasterDB).
 
 local ADDON_NAME, ns = ...
 local L = ns.L
@@ -49,7 +49,7 @@ local function build()
     local category = Settings.RegisterVerticalLayoutCategory(ADDON_NAME)
 
     local function register(key, varType, label)
-        local setting = Settings.RegisterAddOnSetting(category, "LoreReader_" .. key, key, ns.db, varType, label, ns.DEFAULTS[key])
+        local setting = Settings.RegisterAddOnSetting(category, "Lorecaster_" .. key, key, ns.db, varType, label, ns.DEFAULTS[key])
         Options.settings[key] = setting
         return setting
     end

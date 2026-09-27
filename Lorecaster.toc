@@ -1,11 +1,11 @@
 ## Interface: 16001, 120105
-## Title: LoreReader
+## Title: Lorecaster
 ## Notes: Reads quest, gossip and book lore aloud with the game's text-to-speech.
 ## Author: Casper Joergensen
 ## Version: @project-version@
 ## X-License: MIT
-## X-Website: https://github.com/CasperJoergensen/LoreReader
-## SavedVariables: LoreReaderDB
+## X-Website: https://github.com/CasperJoergensen/Lorecaster
+## SavedVariables: LorecasterDB
 
 Locales.lua
 Text.lua

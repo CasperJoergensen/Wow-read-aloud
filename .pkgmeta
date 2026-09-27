@@ -1,4 +1,4 @@
-package-as: LoreReader
+package-as: Lorecaster
 
 enable-nolib-creation: no
 

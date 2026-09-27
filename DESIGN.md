@@ -1,4 +1,4 @@
-# LoreReader — design
+# Lorecaster — design
 
 A WoW Forever and retail addon, published on CurseForge, that reads quest, gossip and book lore aloud with the game's text-to-speech.
 
@@ -14,9 +14,9 @@ A WoW Forever and retail addon, published on CurseForge, that reads quest, gossi
 | Interrupt | Clicking Read Aloud anywhere stops the current reading and starts the new one. |
 | Stop | Closing the frame (Escape, X, walking away); opening another quest/gossip/book; new gossip text or a book page turn. **Not** on Accept Quest / Complete Quest — the story keeps going while you run off. |
 | Text | Read verbatim (including your character's name). Colour codes, hyperlinks, textures and `<stage direction>` brackets are stripped; line breaks become sentence breaks. |
-| Settings | Options → AddOns → LoreReader: voice, speed, volume, test button. Account-wide. Slash commands mirror them. |
+| Settings | Options → AddOns → Lorecaster: voice, speed, volume, test button. Account-wide. Slash commands mirror them. |
 | Voice missing | Fall back to WoW's default voice and warn once per session. |
-| Slash | `/lore`, `/lr`, `/readaloud`. |
+| Slash | `/lore`, `/lc`, `/readaloud`. |
 | Languages | Addon labels go through `Locales.lua` (English only for now, falls back to English). Game text is read in the client's language. |
 | Distribution | CurseForge only, MIT license, public GitHub repo. Tag `v*` → BigWigs packager uploads for Forever (1.60.1) and retail. |
 
@@ -33,7 +33,7 @@ A pixel bridge (addon draws text as coloured pixels, external program screen-cap
 ## Code layout
 
 ```
-LoreReader.toc     Interface 16001 (Forever) + 120105 (retail), SavedVariables LoreReaderDB
+Lorecaster.toc     Interface 16001 (Forever) + 120105 (retail), SavedVariables LorecasterDB
 Locales.lua        Translatable UI strings (L["English text"])
 Text.lua           Markup clean-up and chunking (pure Lua, unit-tested)
 Speech.lua         Queue over C_VoiceChat.SpeakText, voice resolution and fallbacks

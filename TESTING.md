@@ -4,17 +4,17 @@ The addon was built without access to the game. Text clean-up and the speech que
 
 ## Basics
 
-- [ ] LoreReader shows in the AddOns list and loads without Lua errors (turn on `/console scriptErrors 1`).
-- [ ] `/lore help` prints the commands; `/lr` and `/readaloud` work too.
+- [ ] Lorecaster shows in the AddOns list and loads without Lua errors (turn on `/console scriptErrors 1`).
+- [ ] `/lore help` prints the commands; `/lc` and `/readaloud` work too.
 - [ ] `/lore test` speaks the sample with the default voice.
-- [ ] ⚠️ `/lore` opens Options → AddOns → LoreReader with Voice, Speed, Volume and Test voice. If it prints "Couldn't build the options panel", copy the error.
+- [ ] ⚠️ `/lore` opens Options → AddOns → Lorecaster with Voice, Speed, Volume and Test voice. If it prints "Couldn't build the options panel", copy the error.
 - [ ] Changing speed/volume in the panel changes `/lore test`. Settings survive `/reload` and apply on another character.
 
 ## Voices
 
 - [ ] `/lore voices` lists the neural voices after SETUP.md.
 - [ ] Pick one in the panel; `/lore test` uses it.
-- [ ] Set a nonexistent voice (`/run LoreReaderDB.voice="Nope"`), `/reload`, read something: default voice is used and one warning is printed, not one per reading.
+- [ ] Set a nonexistent voice (`/run LorecasterDB.voice="Nope"`), `/reload`, read something: default voice is used and one warning is printed, not one per reading.
 
 ## Quests (NPC quest window)
 
@@ -61,7 +61,7 @@ The addon was built without access to the game. Text clean-up and the speech que
 
 ## Retail
 
-- [ ] LoreReader loads in retail without "out of date" (see SETUP.md if it does).
+- [ ] Lorecaster loads in retail without "out of date" (see SETUP.md if it does).
 - [ ] Spot-check one quest offer, one gossip NPC and one book: buttons are placed sensibly and reading works.
 
 ## If a button is in the wrong place

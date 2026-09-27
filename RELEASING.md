@@ -4,12 +4,12 @@ Releases are built and uploaded by the [BigWigs packager](https://github.com/Big
 
 ## One-time setup
 
-1. **Make the repo public and rename it** to `LoreReader` (GitHub → Settings → General). Blizzard requires addon code to be publicly visible, and the TOC and page links point to `github.com/CasperJoergensen/LoreReader`.
+1. **Make the repo public and rename it** to `Lorecaster` (GitHub → Settings → General). Blizzard requires addon code to be publicly visible, and the TOC and page links point to `github.com/CasperJoergensen/Lorecaster`.
 2. **Create the CurseForge project** at https://authors.curseforge.com:
-   - game: World of Warcraft; name: **LoreReader**; license: **MIT**
+   - game: World of Warcraft; name: **Lorecaster**; license: **MIT**
    - paste the description from `CURSEFORGE.md`
    - add a logo (400×400)
-3. **Add the project ID to the TOC.** Find the numeric ID in the "About Project" panel on the project page, and add this line to `LoreReader.toc`:
+3. **Add the project ID to the TOC.** Find the numeric ID in the "About Project" panel on the project page, and add this line to `Lorecaster.toc`:
    ```
    ## X-Curse-Project-ID: 123456
    ```

@@ -8,9 +8,9 @@ Paste the section below into the CurseForge project description. It uses Markdow
 
 ---
 
-## LoreReader
+## Lorecaster
 
-**Hear the story instead of skimming it.** LoreReader adds a **Read Aloud** button to quest, dialogue and book windows and reads the lore aloud with your computer's text-to-speech voices.
+**Hear the story instead of skimming it.** Lorecaster adds a **Read Aloud** button to quest, dialogue and book windows and reads the lore aloud with your computer's text-to-speech voices.
 
 ### Features
 
@@ -23,7 +23,7 @@ Paste the section below into the CurseForge project description. It uses Markdow
 - **Keep playing:** accept the quest and run off. The reading carries on.
 - **Stops when you leave:** closing the window, walking away or opening something else stops the reading.
 - **One reading at a time:** the button turns into **Stop** while it reads, and clicking Read Aloud somewhere else switches to the new text.
-- **Your choice of voice:** pick the voice, speed and volume in Options → AddOns → LoreReader. There's a test button to try it out.
+- **Your choice of voice:** pick the voice, speed and volume in Options → AddOns → Lorecaster. There's a test button to try it out.
 - **Works in WoW Forever and retail.** Quest text is read in your game's language, as long as you have a voice installed for it.
 
 ### Slash commands
@@ -36,13 +36,13 @@ Paste the section below into the CurseForge project description. It uses Markdow
 
 ### Better voices (optional)
 
-LoreReader uses your operating system's voices. On **Mac**, you can download better voices in System Settings → Accessibility → Spoken Content → Manage Voices. On **Windows**, the built-in voices sound robotic. A third-party tool can make Windows 11's natural voices available to WoW; see the setup guide linked below. That step is optional, and LoreReader works without it.
+Lorecaster uses your operating system's voices. On **Mac**, you can download better voices in System Settings → Accessibility → Spoken Content → Manage Voices. On **Windows**, the built-in voices sound robotic. A third-party tool can make Windows 11's natural voices available to WoW; see the setup guide linked below. That step is optional, and Lorecaster works without it.
 
 ### Beta
 
-WoW Forever is in beta, and so is LoreReader. If a button is in the wrong place or something doesn't read correctly, please open an issue.
+WoW Forever is in beta, and so is Lorecaster. If a button is in the wrong place or something doesn't read correctly, please open an issue.
 
 ---
 
-- **Setup guide and better voices:** https://github.com/CasperJoergensen/LoreReader/blob/main/SETUP.md
-- **Source code and issues:** https://github.com/CasperJoergensen/LoreReader
+- **Setup guide and better voices:** https://github.com/CasperJoergensen/Lorecaster/blob/main/SETUP.md
+- **Source code and issues:** https://github.com/CasperJoergensen/Lorecaster

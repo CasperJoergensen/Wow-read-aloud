@@ -4,17 +4,17 @@ local ADDON_NAME, ns = ...
 local L = ns.L
 
 function ns.Print(msg)
-    DEFAULT_CHAT_FRAME:AddMessage("|cffc8a86bLoreReader:|r " .. msg)
+    DEFAULT_CHAT_FRAME:AddMessage("|cffc8a86bLorecaster:|r " .. msg)
 end
 
 local function initDB()
-    LoreReaderDB = type(LoreReaderDB) == "table" and LoreReaderDB or {}
+    LorecasterDB = type(LorecasterDB) == "table" and LorecasterDB or {}
     for key, value in pairs(ns.DEFAULTS) do
-        if type(LoreReaderDB[key]) ~= type(value) then
-            LoreReaderDB[key] = value
+        if type(LorecasterDB[key]) ~= type(value) then
+            LorecasterDB[key] = value
         end
     end
-    ns.db = LoreReaderDB
+    ns.db = LorecasterDB
 end
 
 local function clamp(n, lo, hi)
@@ -91,10 +91,10 @@ local function handleSlash(input)
     end
 end
 
-SLASH_LOREREADER1 = "/lore"
-SLASH_LOREREADER2 = "/lr"
-SLASH_LOREREADER3 = "/readaloud"
-SlashCmdList.LOREREADER = handleSlash
+SLASH_LORECASTER1 = "/lore"
+SLASH_LORECASTER2 = "/lc"
+SLASH_LORECASTER3 = "/readaloud"
+SlashCmdList.LORECASTER = handleSlash
 
 local events = CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")

@@ -1,13 +1,13 @@
-# LoreReader
+# Lorecaster
 
 A World of Warcraft addon that reads quest, dialogue and book lore aloud, using the game's built-in text-to-speech. It works in **WoW Forever** and **retail**.
 
-Click **Read Aloud** on a quest, an NPC's dialogue or a book, and LoreReader reads the story: the title and description, not the objectives or reward lists. Accept the quest and keep playing while it finishes reading.
+Click **Read Aloud** on a quest, an NPC's dialogue or a book, and Lorecaster reads the story: the title and description, not the objectives or reward lists. Accept the quest and keep playing while it finishes reading.
 
-- **Install:** get it from CurseForge, or copy this repository into `Interface/AddOns/LoreReader`.
+- **Install:** get it from CurseForge, or copy this repository into `Interface/AddOns/Lorecaster`.
 - **Better voices:** see [SETUP.md](SETUP.md).
 - **Commands:** `/lore help`.
-- **Bugs and ideas:** [open an issue](https://github.com/CasperJoergensen/LoreReader/issues).
+- **Bugs and ideas:** [open an issue](https://github.com/CasperJoergensen/Lorecaster/issues).
 
 ## Development
 
