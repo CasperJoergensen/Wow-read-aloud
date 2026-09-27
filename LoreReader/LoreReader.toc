@@ -1,0 +1,13 @@
+## Interface: 16001
+## Title: LoreReader
+## Notes: Reads quest, gossip and book lore aloud with the game's text-to-speech.
+## Author: Casper Joergensen
+## Version: 0.1.0
+## SavedVariables: LoreReaderDB
+
+Text.lua
+Speech.lua
+Sources.lua
+Buttons.lua
+Settings.lua
+Core.lua
