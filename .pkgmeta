@@ -15,3 +15,4 @@ ignore:
   - RELEASING.md
   - CURSEFORGE.md
   - CHANGELOG.md
+  - HANDOFF.md
